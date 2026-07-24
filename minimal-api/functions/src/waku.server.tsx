@@ -6,10 +6,10 @@ import App from './components2/App';
 export default adapter({
   handleRequest: (input, { renderRsc, renderHtml }) =>
     runWithRequest(input.req, async () => {
-      if (input.type === 'component') {
+      if (input.type === 'rsc') {
         return renderRsc({ App: <App name={input.rscPath || 'Waku'} /> });
       }
-      if (input.type === 'function') {
+      if (input.type === 'call') {
         const elements: Record<string, unknown> = {};
         const rerender = (rscPath: string) => {
           elements.App = <App name={rscPath || 'Waku'} />;
@@ -19,7 +19,7 @@ export default adapter({
         );
         return renderRsc(elements, { value });
       }
-      if (input.type === 'custom' && input.pathname === '/') {
+      if (input.type === 'http' && input.pathname === '/') {
         return renderHtml(
           await renderRsc({ App: <App name="Waku" /> }),
           <Slot id="App" />,

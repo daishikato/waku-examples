@@ -4,7 +4,7 @@ import App from './components/App';
 
 export default adapter({
   handleRequest: async (input, { renderRsc, renderHtml }) => {
-    if (input.type === 'component') {
+    if (input.type === 'rsc') {
       return renderRsc({
         App: (
           <App name={input.rscPath || 'Waku'}>
@@ -13,7 +13,7 @@ export default adapter({
         ),
       });
     }
-    if (input.type === 'custom' && input.pathname === '/') {
+    if (input.type === 'http' && input.pathname === '/') {
       return renderHtml(
         await renderRsc({
           App: (

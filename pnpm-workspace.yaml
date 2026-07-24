@@ -8,3 +8,6 @@ allowBuilds:
   esbuild: false
   sharp: false
   workerd: false
+minimumReleaseAgeExclude:
+  - '@vitejs/plugin-rsc'
+  - 'waku'

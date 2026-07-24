@@ -5,10 +5,10 @@ import App from './components/App';
 
 export default adapter({
   handleRequest: async (input, { renderRsc, renderHtml }) => {
-    if (input.type === 'component') {
+    if (input.type === 'rsc') {
       return renderRsc({ App: <App name={input.rscPath || 'Waku'} /> });
     }
-    if (input.type === 'function') {
+    if (input.type === 'call') {
       const elements: Record<string, unknown> = {};
       const rerender = (rscPath: string) => {
         elements.App = <App name={rscPath || 'Waku'} />;
@@ -18,11 +18,14 @@ export default adapter({
       );
       return renderRsc(elements, { value });
     }
-    if (
-      (input.type === 'action' || input.type === 'custom') &&
-      input.pathname === '/'
-    ) {
-      const formState = input.type === 'action' ? await input.fn() : undefined;
+    if (input.type === 'http' && input.pathname === '/') {
+      let formState: unknown;
+      if (input.tryAction) {
+        const result = await input.tryAction();
+        if (result.action) {
+          formState = result.formState;
+        }
+      }
       return renderHtml(
         await renderRsc({ App: <App name="Waku" /> }),
         <Slot id="App" />,

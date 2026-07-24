@@ -14,10 +14,10 @@ const stringToStream = (str: string): ReadableStream => {
 
 export default adapter({
   handleRequest: async (input, { renderRsc, renderHtml }) => {
-    if (input.type === 'component') {
+    if (input.type === 'rsc') {
       return renderRsc({ App: <App name={input.rscPath || 'Waku'} /> });
     }
-    if (input.type === 'custom' && input.pathname === '/') {
+    if (input.type === 'http' && input.pathname === '/') {
       return renderHtml(
         await renderRsc({ App: <App name="Waku" /> }),
         <Slot id="App" />,
@@ -26,7 +26,7 @@ export default adapter({
         },
       );
     }
-    if (input.type === 'custom' && input.pathname === '/api/hello') {
+    if (input.type === 'http' && input.pathname === '/api/hello') {
       return stringToStream('world');
     }
   },

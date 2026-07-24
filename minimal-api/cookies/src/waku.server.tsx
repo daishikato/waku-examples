@@ -13,14 +13,17 @@ export const getCount = () => cookieStorage.getStore()?.count ?? 0;
 export default adapter(
   {
     handleRequest: async (input, { renderRsc, renderHtml }) => {
-      const cookies = cookie.parse(input.req.headers.get('cookie') || '');
+      const cookies = cookie.parseCookie(input.req.headers.get('cookie') || '');
       const count = (Number(cookies.count) || 0) + 1;
-      const setCookie = cookie.serialize('count', String(count));
+      const setCookie = cookie.stringifySetCookie({
+        name: 'count',
+        value: String(count),
+      });
       return cookieStorage.run({ count }, async () => {
         const items = JSON.parse(
           await fsPromises.readFile('./private/items.json', 'utf8'),
         );
-        if (input.type === 'component') {
+        if (input.type === 'rsc') {
           const stream = await renderRsc({
             App: <App name={input.rscPath || 'Waku'} items={items} />,
           });
@@ -28,7 +31,7 @@ export default adapter(
             headers: { 'set-cookie': setCookie },
           });
         }
-        if (input.type === 'custom' && input.pathname === '/') {
+        if (input.type === 'http' && input.pathname === '/') {
           const response = await renderHtml(
             await renderRsc({ App: <App name={'Waku'} items={items} /> }),
             <Slot id="App" />,

@@ -5,7 +5,7 @@ import Layout from './components/layout';
 
 export default adapter({
   handleRequest: async (input, { renderRsc, renderHtml }) => {
-    if (input.type === 'component') {
+    if (input.type === 'rsc') {
       return renderRsc({
         App: (
           <Layout>
@@ -14,7 +14,7 @@ export default adapter({
         ),
       });
     }
-    if (input.type === 'custom' && input.pathname === '/') {
+    if (input.type === 'http' && input.pathname === '/') {
       return renderHtml(
         await renderRsc({
           App: (

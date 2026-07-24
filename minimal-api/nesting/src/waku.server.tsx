@@ -6,7 +6,7 @@ import InnerApp from './components/InnerApp';
 
 export default adapter({
   handleRequest: async (input, { renderRsc, renderHtml }) => {
-    if (input.type === 'component') {
+    if (input.type === 'rsc') {
       const params = new URLSearchParams(
         input.rscPath || 'App=Waku&InnerApp=0',
       );
@@ -22,7 +22,7 @@ export default adapter({
       }
       return renderRsc(result);
     }
-    if (input.type === 'custom' && input.pathname === '/') {
+    if (input.type === 'http' && input.pathname === '/') {
       return renderHtml(
         await renderRsc({
           App: <App name="Waku" />,
