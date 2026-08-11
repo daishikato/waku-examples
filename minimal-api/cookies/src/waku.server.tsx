@@ -3,7 +3,7 @@ import fsPromises from 'node:fs/promises';
 import * as cookie from 'cookie';
 import { contextStorage, getContext } from 'hono/context-storage';
 import adapter from 'waku/adapters/default';
-import { Slot } from 'waku/minimal/client';
+import { Slot_UNSTABLE as Slot } from 'waku/minimal/client';
 import App from './components/App';
 
 const cookieStorage = new AsyncLocalStorage<{ count: number }>();

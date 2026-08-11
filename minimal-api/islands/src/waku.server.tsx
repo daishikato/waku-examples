@@ -1,5 +1,8 @@
 import adapter from 'waku/adapters/default';
-import { Children, Slot } from 'waku/minimal/client';
+import {
+  Children_UNSTABLE as Children,
+  Slot_UNSTABLE as Slot,
+} from 'waku/minimal/client';
 import App from './components/App';
 import Dynamic from './components/Dynamic';
 

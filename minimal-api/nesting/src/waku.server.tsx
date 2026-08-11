@@ -1,5 +1,5 @@
 import adapter from 'waku/adapters/default';
-import { Slot } from 'waku/minimal/client';
+import { Slot_UNSTABLE as Slot } from 'waku/minimal/client';
 import App from './components/App';
 import AppWithoutSsr from './components/AppWithoutSsr';
 import InnerApp from './components/InnerApp';

@@ -1,6 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import adapter from 'waku/adapters/default';
-import { Children, Slot } from 'waku/minimal/client';
+import {
+  Children_UNSTABLE as Children,
+  Slot_UNSTABLE as Slot,
+} from 'waku/minimal/client';
 import { unstable_defineRouter as defineRouter } from 'waku/router/server';
 import BarPage from './components/BarPage';
 import FooPage from './components/FooPage';

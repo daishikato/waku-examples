@@ -1,12 +1,32 @@
 'use client';
 
-import { use, useEffect } from 'react';
+import { use, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import {
-  Slot,
+  Slot_UNSTABLE as Slot,
+  unstable_fetchRsc as fetchRsc,
+  unstable_registerRscReloadListener as registerRscReloadListener,
   useElementsPromise_UNSTABLE as useElementsPromise,
-  useRefetch,
+  useMergeElements_UNSTABLE as useMergeElements,
 } from 'waku/minimal/client';
+
+// The minimal API intentionally leaves refetching to userland.
+const useRefetch = () => {
+  const mergeElements = useMergeElements();
+  return useCallback(
+    (rscPath: string, rscParams?: unknown) => {
+      const refetch = () => mergeElements(fetchRsc(rscPath, rscParams));
+      registerRscReloadListener(
+        () => {
+          void refetch();
+        },
+        { replace: true },
+      );
+      return refetch();
+    },
+    [mergeElements],
+  );
+};
 
 const getSliceSlotId = (id: string) => 'slice:' + id;
 

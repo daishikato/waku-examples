@@ -1,5 +1,5 @@
 import adapter from 'waku/adapters/default';
-import { Slot } from 'waku/minimal/client';
+import { Slot_UNSTABLE as Slot } from 'waku/minimal/client';
 import { runWithRequest, runWithRerender } from './als';
 import App from './components2/App';
 
