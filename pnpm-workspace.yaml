@@ -11,3 +11,4 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - '@vitejs/plugin-rsc'
   - 'waku'
+  - 'waku-jotai'

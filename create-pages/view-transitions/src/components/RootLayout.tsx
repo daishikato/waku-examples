@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link } from './Link';
+import { Link } from 'waku/router/client';
 import '../styles.css';
 
 const RootLayout = ({ children }: { children: ReactNode }) => (

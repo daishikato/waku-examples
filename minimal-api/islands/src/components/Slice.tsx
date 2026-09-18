@@ -4,15 +4,17 @@ import { use, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import {
   Slot_UNSTABLE as Slot,
-  unstable_fetchRsc as fetchRsc,
-  unstable_registerRscReloadListener as registerRscReloadListener,
   useElementsPromise_UNSTABLE as useElementsPromise,
+  useFetchRsc_UNSTABLE as useFetchRsc,
   useMergeElements_UNSTABLE as useMergeElements,
+  useRegisterRscReloadListener_UNSTABLE as useRegisterRscReloadListener,
 } from 'waku/minimal/client';
 
 // The minimal API intentionally leaves refetching to userland.
 const useRefetch = () => {
+  const fetchRsc = useFetchRsc();
   const mergeElements = useMergeElements();
+  const registerRscReloadListener = useRegisterRscReloadListener();
   return useCallback(
     (rscPath: string, rscParams?: unknown) => {
       const refetch = () => mergeElements(fetchRsc(rscPath, rscParams));
@@ -24,7 +26,7 @@ const useRefetch = () => {
       );
       return refetch();
     },
-    [mergeElements],
+    [fetchRsc, mergeElements, registerRscReloadListener],
   );
 };
 

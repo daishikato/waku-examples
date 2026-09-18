@@ -4,20 +4,9 @@ import { useEffect } from 'react';
 import { useRouter } from 'waku/router/client';
 
 export const RoutingHandler = () => {
-  const router = useRouter();
+  const { path, query, hash } = useRouter();
   useEffect(() => {
-    const onStart = () => {
-      console.log('Route change started');
-    };
-    const onComplete = () => {
-      console.log('Route change completed');
-    };
-    router.unstable_events.on('start', onStart);
-    router.unstable_events.on('complete', onComplete);
-    return () => {
-      router.unstable_events.off('start', onStart);
-      router.unstable_events.off('complete', onComplete);
-    };
-  });
+    console.log('Route changed', { path, query, hash });
+  }, [path, query, hash]);
   return null;
 };
