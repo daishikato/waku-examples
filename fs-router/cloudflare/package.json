@@ -11,23 +11,23 @@
     "typegen": "waku router typegen"
   },
   "dependencies": {
-    "hono": "^4.13.0",
+    "hono": "^4.13.9",
     "react": "~19.3.0",
     "react-dom": "~19.3.0",
     "react-server-dom-webpack": "~19.3.0",
-    "waku": "1.0.0-rc.1",
-    "wrangler": "^4.113.0"
+    "waku": "1.0.0-rc.2",
+    "wrangler": "^4.141.0"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.46.0",
-    "@rolldown/plugin-babel": "^0.2.3",
+    "@cloudflare/vite-plugin": "^1.60.2",
+    "@rolldown/plugin-babel": "^0.2.4",
     "@tailwindcss/vite": "4.3.3",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.6.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.0.4",
+    "@vitejs/plugin-react": "^6.1.1",
     "babel-plugin-react-compiler": "^1.0.0",
-    "miniflare": "^4.20260721.0",
+    "miniflare": "5.20260925.0-alpha",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
   }

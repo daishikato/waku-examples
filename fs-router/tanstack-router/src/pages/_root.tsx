@@ -4,6 +4,7 @@ export default function Root({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Waku</title>
         <script src="https://cdn.tailwindcss.com"></script>
