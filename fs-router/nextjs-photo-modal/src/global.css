@@ -1,0 +1,65 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+.feed {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px;
+  list-style: none;
+}
+
+.feed a,
+.photo {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: 6px;
+  background: #e8e8e8;
+  color: inherit;
+  font-size: 2rem;
+  text-decoration: none;
+}
+
+.photo[data-standalone] {
+  max-width: 480px;
+  margin: 24px auto;
+}
+
+.photo-dialog {
+  width: min(480px, 90vw);
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+}
+
+.photo-dialog::backdrop {
+  background: rgb(0 0 0 / 60%);
+}
+
+.photo-dialog-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  font-size: 2rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.photo-dialog-close:hover {
+  background: rgb(0 0 0 / 8%);
+}
+
+/* The layout renders the feed on every route, so a photo loaded directly hides it. */
+body:has([data-standalone]) .feed {
+  display: none;
+}

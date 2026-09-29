@@ -2,8 +2,8 @@
  * Smoke tests for all examples.
  *
  * Boots every example in both DEV and PRD modes and checks that the home page
- * renders with a "Waku" title. Examples are discovered by scanning the API
- * group directories at the repo root.
+ * renders with a "Waku" title, or the one listed in `expectedTitles`. Examples
+ * are discovered by scanning the API group directories at the repo root.
  */
 import type { ChildProcess } from 'node:child_process';
 import { exec } from 'node:child_process';
@@ -35,6 +35,14 @@ const examples = groups.flatMap((group) => {
       cwd: join(groupDir, entry.name),
     }));
 });
+
+// The Next.js migrations keep the titles of the apps they were migrated from.
+const expectedTitles: Record<string, RegExp> = {
+  'fs-router/nextjs-blog-starter': /^Next\.js Blog Example/,
+  'fs-router/nextjs-commerce': /^Acme Store/,
+  'fs-router/nextjs-dashboard': /^Acme Dashboard/,
+  'fs-router/nextjs-photo-modal': /^NextGram/,
+};
 
 const modes = ['DEV', 'PRD'] as const;
 
@@ -90,7 +98,9 @@ for (const { name, cwd } of examples) {
           await page.goto(`http://localhost:${port}/`);
           // title may not be ready yet
           await page.waitForLoadState('load');
-          await expect.poll(() => page.title()).toMatch(/^Waku/);
+          await expect
+            .poll(() => page.title())
+            .toMatch(expectedTitles[name] ?? /^Waku/);
         });
       });
     }

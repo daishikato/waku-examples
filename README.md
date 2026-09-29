@@ -33,6 +33,10 @@ server entry); those marked _explicit_ provide a `src/waku.server.tsx` that call
 | [`tanstack-router`](fs-router/tanstack-router) | Replace the client router with TanStack Router _(explicit)_ |
 | [`no-ssr`](fs-router/no-ssr) | Disable SSR for client-only rendering _(explicit)_ |
 | [`cloudflare`](fs-router/cloudflare) | Deploy to Cloudflare Workers _(explicit)_ |
+| [`nextjs-blog-starter`](fs-router/nextjs-blog-starter) | Next.js blog-starter, migrated: static generation, metadata, markdown |
+| [`nextjs-dashboard`](fs-router/nextjs-dashboard) | Next.js Learn dashboard, migrated: auth, a database, server actions, search |
+| [`nextjs-commerce`](fs-router/nextjs-commerce) | Next.js Commerce, migrated: cookies, optimistic UI, sitemap and OG images |
+| [`nextjs-photo-modal`](fs-router/nextjs-photo-modal) | Nextgram, reimplemented: parallel and intercepting routes |
 
 ### create-pages
 
@@ -94,6 +98,7 @@ The same examples, grouped by what they teach.
 | Integrations | [`create-pages/react-tweet`](create-pages/react-tweet), [`fs-router/tanstack-router`](fs-router/tanstack-router) |
 | Deployment | [`fs-router/cloudflare`](fs-router/cloudflare) |
 | Tooling & config | [`minimal-api/path-alias`](minimal-api/path-alias) |
+| Migrating from Next.js | [`fs-router/nextjs-blog-starter`](fs-router/nextjs-blog-starter), [`fs-router/nextjs-dashboard`](fs-router/nextjs-dashboard), [`fs-router/nextjs-commerce`](fs-router/nextjs-commerce), [`fs-router/nextjs-photo-modal`](fs-router/nextjs-photo-modal) |
 
 ## Running an example
 
