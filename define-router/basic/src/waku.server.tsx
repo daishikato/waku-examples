@@ -120,7 +120,7 @@ export default adapter(
           { type: 'literal', name: 'dynamic' },
           { type: 'group', name: 'slug' },
         ],
-        isStatic: true,
+        isStatic: false, // its page element is dynamic
         slices: [],
         rootElement: { isStatic: true, renderer: renderRoot },
         routeElement: {
