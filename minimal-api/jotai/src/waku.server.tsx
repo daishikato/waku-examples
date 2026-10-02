@@ -17,19 +17,11 @@ export default adapter({
       );
     }
   },
-  handleBuild: async ({
-    rscPath2pathname,
-    renderRsc,
-    renderHtml,
-    generateFile,
-  }) => {
-    const rscPath = '';
+  handleBuild: async ({ renderRsc, renderHtml, generateFile }) => {
     const stream = await renderRsc({
       App: <App name="Waku" rscParams={undefined} />,
     });
-    const [stream1, stream2] = stream.tee();
-    await generateFile(rscPath2pathname(rscPath), stream1);
-    const res = await renderHtml(stream2, <Slot id="App" />, { rscPath });
+    const res = await renderHtml(stream, <Slot id="App" />, { rscPath: '' });
     await generateFile('index.html', res.body!);
   },
 });
