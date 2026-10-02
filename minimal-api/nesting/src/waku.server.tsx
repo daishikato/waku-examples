@@ -32,6 +32,9 @@ export default adapter({
         { rscPath: '' },
       );
     }
+    if (input.type === 'http' && input.pathname === '/no-ssr') {
+      return 'fallback';
+    }
   },
   handleBuild: async ({
     renderRsc,
@@ -45,7 +48,9 @@ export default adapter({
     });
     await generateFile(rscPath2pathname(''), body);
     for (const count of [1, 2, 3, 4, 5]) {
-      const innerBody = await renderRsc({ App: <App name="Waku" /> });
+      const innerBody = await renderRsc({
+        InnerApp: <InnerApp count={count} />,
+      });
       await generateFile(rscPath2pathname(`InnerApp=${count}`), innerBody);
     }
     await generateDefaultHtml('index.html');
