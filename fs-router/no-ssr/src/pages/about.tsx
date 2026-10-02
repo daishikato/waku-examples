@@ -28,5 +28,6 @@ const getData = async () => {
 export const getConfig = async () => {
   return {
     render: 'static',
+    unstable_disableSSR: true,
   } as const;
 };
