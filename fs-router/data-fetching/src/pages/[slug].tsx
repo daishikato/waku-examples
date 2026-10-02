@@ -1,10 +1,10 @@
 import { Link } from 'waku';
 import type { PageProps } from 'waku/router';
-import { getPokemonPaths } from '../lib';
+import { getPokemonPaths, toPath } from '../lib';
 import { pokemon } from '../lib/pokemon';
 
 export default async function PokemonPage({ slug }: PageProps<'/[slug]'>) {
-  const pokemon = await getPokemon(slug.replaceAll('-', ' '));
+  const pokemon = await getPokemon(slug);
 
   if (!pokemon) {
     return null;
@@ -69,7 +69,7 @@ export default async function PokemonPage({ slug }: PageProps<'/[slug]'>) {
 }
 
 const getPokemon = async (slug: string) => {
-  return pokemon.find((row: any) => row.slug === slug) ?? null;
+  return pokemon.find((row: any) => toPath(row.slug) === slug) ?? null;
 };
 
 export const getConfig = async () => {
