@@ -13,7 +13,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <>
       <title>{process.env.SITE_NAME || 'Acme Store'}</title>
-      <meta name="robots" content="index, follow" />
       <CartProvider cartPromise={cart}>
         <Navbar />
         <main>
