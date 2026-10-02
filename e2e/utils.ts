@@ -95,6 +95,7 @@ export const ignoreErrors: RegExp[] = [
   /^(Error during rendering: )?Error: Intentional render error\s+at ErrorRender/,
   /^Error: Input is required\b/,
   /^(Error during rendering: )?Error: 401 Unauthorized\s+at CheckIfAccessDenied/,
+  /^(Error during rendering: )?Error: Unauthorized(\\n|\s)+at requireSession/,
   /^(Error during rendering: )?Error: Not Found\s+at (Sync|Async)Page/,
   /^(Error during rendering: )?Error: Not Found\s+at info/,
   /^(Error during rendering: )?Error: Not Found\s+at createCustomError/,
