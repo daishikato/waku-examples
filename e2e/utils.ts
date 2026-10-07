@@ -1,7 +1,10 @@
 import { exec, spawn } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
+import { rmSync } from 'node:fs';
 import { createConnection, createServer } from 'node:net';
+import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import { info } from '@actions/core';
 import { test as basicTest } from '@playwright/test';
 import type { ConsoleMessage, Page } from '@playwright/test';
 
@@ -53,13 +56,18 @@ export const waitForPortReady = async (port: number): Promise<void> =>
     tryConnect();
   });
 
-export const runShell = (command: string, cwd: string): ChildProcess =>
+export const runShell = (
+  command: string,
+  cwd: string,
+  env?: Record<string, string>,
+): ChildProcess =>
   spawn(command, {
     cwd,
     shell: true,
     detached: process.platform !== 'win32',
     windowsHide: true,
     stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env, ...env },
   });
 
 export const terminate = async (cp: ChildProcess): Promise<void> => {
@@ -79,21 +87,22 @@ const unexpectedErrors: RegExp[] = [
 ];
 
 // Expected errors that some examples log on purpose (error boundaries, 404s,
-// redirects, etc.). These should not fail the smoke test.
+// redirects, etc.). They are left out of the logged server output.
 export const ignoreErrors: RegExp[] = [
   /ExperimentalWarning: Custom ESM Loaders is an experimental feature and might change at any time/,
   /npm warn Unknown env config "verify-deps-before-run"\./,
-  /^(Error during rendering: )?Error: Unexpected error\s+at ThrowsComponent/,
-  /^(Error during rendering: )?Error: Intentional render error\s+at ErrorRender/,
+  /^(Error during rendering: )?Error: Unexpected error(\\n|\s)+at ThrowsComponent/,
+  /^(Error during rendering: )?Error: Intentional render error(\\n|\s)+at ErrorRender/,
   /^Error: Input is required\b/,
-  /^(Error during rendering: )?Error: 401 Unauthorized\s+at CheckIfAccessDenied/,
-  /^(Error during rendering: )?Error: Not Found\s+at (Sync|Async)Page/,
-  /^(Error during rendering: )?Error: Not Found\s+at info/,
-  /^(Error during rendering: )?Error: Not Found\s+at createCustomError/,
-  /^(Error during rendering: )?Error: Redirect\s+at info/,
-  /^(Error during rendering: )?Error: Redirect\s+at createCustomError/,
+  /^(Error during rendering: )?Error: 401 Unauthorized(\\n|\s)+at CheckIfAccessDenied/,
+  /^(Error during rendering: )?Error: Unauthorized(\\n|\s)+at requireSession/,
+  /^(Error during rendering: )?Error: Not Found(\\n|\s)+at (Sync|Async)Page/,
+  /^(Error during rendering: )?Error: Not Found(\\n|\s)+at info/,
+  /^(Error during rendering: )?Error: Not Found(\\n|\s)+at createCustomError/,
+  /^(Error during rendering: )?Error: Redirect(\\n|\s)+at info/,
+  /^(Error during rendering: )?Error: Redirect(\\n|\s)+at createCustomError/,
   /^(Error during rendering: )?\[Error: An error occurred in the Server Components render\./,
-  /^Error: pathname must start with basePath: \/favicon\.ico\s+at removeBase/,
+  /^Error: pathname must start with basePath: \/favicon\.ico(\\n|\s)+at removeBase/,
 ];
 
 export const test = basicTest.extend<
@@ -113,3 +122,46 @@ export const test = basicTest.extend<
     page.off('console', callback);
   },
 });
+
+const logServerOutput = (cp: ChildProcess) => {
+  for (const [name, stream] of [
+    ['stdout', cp.stdout],
+    ['stderr', cp.stderr],
+  ] as const) {
+    stream?.on('data', (data) => {
+      if (!ignoreErrors.some((re) => re.test(`${data}`))) {
+        info(`${name}: ${data}`);
+      }
+    });
+  }
+};
+
+export const prepareExample = (
+  example: string,
+  { env }: { env?: Record<string, string> } = {},
+) => {
+  const cwd = fileURLToPath(new URL(`../${example}`, import.meta.url));
+  let built = false;
+  return async (mode: TestOptions['mode']) => {
+    if (mode === 'PRD' && !built) {
+      rmSync(`${cwd}/dist`, { recursive: true, force: true });
+      await execAsync('pnpm --silent run build', {
+        cwd,
+        env: { ...process.env, ...env },
+      });
+      built = true;
+    }
+    const port = await getAvailablePort();
+    const script = mode === 'DEV' ? 'dev' : 'start';
+    const cp = runShell(`pnpm --silent run ${script} --port ${port}`, cwd, env);
+    logServerOutput(cp);
+    await waitForPortReady(port);
+    return { port, stopApp: () => terminate(cp) };
+  };
+};
+
+export const waitForHydration = async (page: Page) => {
+  await page.waitForFunction(() =>
+    Object.keys(document.body).some((key) => key.startsWith('__reactFiber')),
+  );
+};

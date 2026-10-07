@@ -34,7 +34,7 @@ jobs:
       - run: pnpm install
       - name: Install Playwright (chromium)
         run: pnpm exec playwright install --with-deps chromium
-      - name: Run examples smoke tests
+      - name: Run e2e tests
         run: pnpm exec playwright test --shard=${{ matrix.shard }}/4
         timeout-minutes: 30
       - uses: actions/upload-artifact@v4

@@ -17,9 +17,11 @@ const shuffle = (array: Array<any>) => {
     .map(({ value }: any) => value);
 };
 
+export const toPath = (slug: string) => slug.replaceAll(' ', '-');
+
 /**
  * Mock static paths
  */
 export const getPokemonPaths = async (): Promise<string[]> => {
-  return pokemon.map((row: any) => row.slug);
+  return pokemon.map((row: any) => toPath(row.slug));
 };

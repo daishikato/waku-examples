@@ -1,6 +1,6 @@
 import { Link } from 'waku';
 import { Reload } from '../components/reload';
-import { sql } from '../lib';
+import { sql, toPath } from '../lib';
 
 export default async function HomePage() {
   const { rows } = await sql`SELECT * FROM pokemon ORDER BY RANDOM() LIMIT 9`;
@@ -21,7 +21,7 @@ export default async function HomePage() {
           {rows.map((row) => (
             <li key={row.id}>
               <Link
-                to={`/${row.slug}`}
+                to={`/${toPath(row.slug)}`}
                 className="flex aspect-square w-full shrink-0 flex-col items-center justify-center rounded-xl bg-gray-50 p-3 text-gray-950 transition-colors duration-500 ease-in-out hover:bg-gray-200"
               >
                 <img
