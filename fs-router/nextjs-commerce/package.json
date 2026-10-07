@@ -24,7 +24,7 @@
     "react-server-dom-webpack": "~19.3.0",
     "satori": "^0.33.5",
     "sonner": "^2.0.8",
-    "waku": "1.0.0-rc.2"
+    "waku": "1.0.0-rc.3"
   },
   "devDependencies": {
     "@tailwindcss/container-queries": "^0.1.1",

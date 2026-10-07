@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import type { ReactNode } from 'react';
 import adapter from 'waku/adapters/default';
 import {
   Children_UNSTABLE as Children,
@@ -12,142 +13,36 @@ import HomePage from './components/HomePage';
 import NestedBazPage from './components/NestedBazPage';
 import Root from './components/Root';
 
-const renderRoot = () => (
-  <Root>
-    <Children />
-  </Root>
-);
+const STATIC_PAGES: Record<string, ReactNode> = {
+  '/': <HomePage />,
+  '/foo': <FooPage />,
+  '/bar': <BarPage />,
+  '/nested/baz': <NestedBazPage />,
+};
 
-const renderHomeLayout = () => (
-  <HomeLayout>
-    <Children />
-  </HomeLayout>
-);
+const root = {
+  immutable: true,
+  render: () => (
+    <Root>
+      <Children />
+    </Root>
+  ),
+};
+
+const homeLayout = {
+  immutable: true,
+  render: () => (
+    <HomeLayout>
+      <Children />
+    </HomeLayout>
+  ),
+};
 
 export default adapter(
   defineRouter({
-    getConfigs: async () => [
-      {
-        type: 'route',
-        pattern: '/',
-        path: [],
-        isStatic: true,
-        slices: [],
-        rootElement: { isStatic: true, renderer: renderRoot },
-        routeElement: {
-          isStatic: true,
-          renderer: () => (
-            <Slot id="layout:/">
-              <Slot id="page:/" />
-            </Slot>
-          ),
-        },
-        elements: {
-          'layout:/': { isStatic: true, renderer: renderHomeLayout },
-          'page:/': { isStatic: true, renderer: () => <HomePage /> },
-        },
-      },
-      {
-        type: 'route',
-        pattern: '/foo',
-        path: [{ type: 'literal', name: 'foo' }],
-        isStatic: true,
-        slices: [],
-        rootElement: { isStatic: true, renderer: renderRoot },
-        routeElement: {
-          isStatic: true,
-          renderer: () => (
-            <Slot id="layout:/">
-              <Slot id="page:/foo" />
-            </Slot>
-          ),
-        },
-        elements: {
-          'layout:/': { isStatic: true, renderer: renderHomeLayout },
-          'page:/foo': { isStatic: true, renderer: () => <FooPage /> },
-        },
-      },
-      {
-        type: 'route',
-        pattern: '/bar',
-        path: [{ type: 'literal', name: 'bar' }],
-        isStatic: true,
-        slices: [],
-        rootElement: { isStatic: true, renderer: renderRoot },
-        routeElement: {
-          isStatic: true,
-          renderer: () => (
-            <Slot id="layout:/">
-              <Slot id="page:/bar" />
-            </Slot>
-          ),
-        },
-        elements: {
-          'layout:/': { isStatic: true, renderer: renderHomeLayout },
-          'page:/bar': { isStatic: true, renderer: () => <BarPage /> },
-        },
-      },
-      {
-        type: 'route',
-        pattern: '/nested/baz',
-        path: [
-          { type: 'literal', name: 'nested' },
-          { type: 'literal', name: 'baz' },
-        ],
-        isStatic: true,
-        slices: [],
-        rootElement: { isStatic: true, renderer: renderRoot },
-        routeElement: {
-          isStatic: true,
-          renderer: () => (
-            <Slot id="layout:/">
-              <Slot id="page:/nested/baz" />
-            </Slot>
-          ),
-        },
-        elements: {
-          'layout:/': { isStatic: true, renderer: renderHomeLayout },
-          'page:/nested/baz': {
-            isStatic: true,
-            renderer: () => <NestedBazPage />,
-          },
-        },
-      },
-      {
-        type: 'route',
-        pattern: '/dynamic/([^/]+)',
-        path: [
-          { type: 'literal', name: 'dynamic' },
-          { type: 'group', name: 'slug' },
-        ],
-        isStatic: false, // its page element is dynamic
-        slices: [],
-        rootElement: { isStatic: true, renderer: renderRoot },
-        routeElement: {
-          isStatic: true,
-          renderer: () => (
-            <Slot id="layout:/">
-              <Slot id="page:/dynamic/[slug]" />
-            </Slot>
-          ),
-        },
-        elements: {
-          'layout:/': { isStatic: true, renderer: renderHomeLayout },
-          // using `[slug]` syntax is just an example and it technically conflicts with others. So, it's better to use a different prefix like `dynamic-page:`.
-          'page:/dynamic/[slug]': {
-            isStatic: false,
-            renderer: ({ routePath }) => <h3>{routePath}</h3>,
-          },
-        },
-      },
-      {
-        type: 'api',
-        path: [
-          { type: 'literal', name: 'api' },
-          { type: 'literal', name: 'hi' },
-        ],
-        isStatic: false,
-        handler: async () => {
+    resolve: async (pathname) => {
+      if (pathname === '/api/hi') {
+        return async () => {
           return new Response(
             new ReadableStream({
               start(controller) {
@@ -156,16 +51,10 @@ export default adapter(
               },
             }),
           );
-        },
-      },
-      {
-        type: 'api',
-        path: [
-          { type: 'literal', name: 'api' },
-          { type: 'literal', name: 'hi.txt' },
-        ],
-        isStatic: true,
-        handler: async () => {
+        };
+      }
+      if (pathname === '/api/hi.txt') {
+        return async () => {
           const hiTxt = await readFile('./private/hi.txt');
           return new Response(
             new ReadableStream({
@@ -175,21 +64,44 @@ export default adapter(
               },
             }),
           );
-        },
-      },
-      {
-        type: 'api',
-        path: [
-          { type: 'literal', name: 'api' },
-          { type: 'literal', name: 'empty' },
-        ],
-        isStatic: false,
-        handler: async () => {
+        };
+      }
+      if (pathname === '/api/empty') {
+        return async () => {
           return new Response(null, {
             status: 200,
           });
-        },
-      },
-    ],
+        };
+      }
+      if (pathname in STATIC_PAGES) {
+        return {
+          elements: {
+            root,
+            route: {
+              immutable: true,
+              render: () => <Slot id="layout:/">{STATIC_PAGES[pathname]}</Slot>,
+            },
+            'layout:/': homeLayout,
+          },
+        };
+      }
+      if (/^\/dynamic\/[^/]+$/.test(pathname)) {
+        return {
+          elements: {
+            root,
+            route: {
+              render: () => (
+                <Slot id="layout:/">
+                  <h3>{pathname}</h3>
+                </Slot>
+              ),
+            },
+            'layout:/': homeLayout,
+          },
+        };
+      }
+      return null;
+    },
+    getBuildPaths: async () => [...Object.keys(STATIC_PAGES), '/api/hi.txt'],
   }),
 );
