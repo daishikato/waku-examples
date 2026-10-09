@@ -90,6 +90,11 @@ test.describe('fs-router/nextjs-commerce', () => {
       .click();
     await expect(page).toHaveURL(url('/checkout'));
     await expect(page.getByRole('heading', { name: 'Checkout' })).toBeVisible();
+    await expect(page).toHaveTitle('Checkout | Acme Store');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'noindex, nofollow',
+    );
   });
 
   test('renders content pages and answers unknown products with 404', async ({
