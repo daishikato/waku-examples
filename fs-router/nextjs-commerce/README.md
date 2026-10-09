@@ -75,6 +75,8 @@ headers, so a cookie written during the request is invisible to it. The jar in
   both libraries from `node_modules` instead of bundling them.
 - `next/form` did a client-side navigation on submit; a plain form does a full
   page load.
+- The fixture cart's `checkoutUrl` is `/checkout`, a page that stands in for the
+  Shopify-hosted checkout the original redirects to.
 - `tsconfig.json`'s `baseUrl` is removed in TypeScript 7, so the `lib/…` and
   `components/…` imports resolve through `paths`, mirrored as Vite aliases in
   `waku.config.ts`.
