@@ -47,7 +47,7 @@ The low-level routing API. `createPages` registers routes programmatically
 | --- | --- |
 | [`basic`](create-pages/basic) | Pages, layouts, slices, and API routes defined in code |
 | [`react-tweet`](create-pages/react-tweet) | Embed a third-party component (`react-tweet`) with SSR |
-| [`weave-render`](create-pages/weave-render) | Weave async server components with client components |
+| [`weave-render`](create-pages/weave-render) | Mix static and dynamic layouts and pages |
 | [`view-transitions`](create-pages/view-transitions) | Animate navigation with the View Transitions API |
 
 ### define-router

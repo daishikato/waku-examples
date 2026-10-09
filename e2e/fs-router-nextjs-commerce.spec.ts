@@ -76,6 +76,27 @@ test.describe('fs-router/nextjs-commerce', () => {
     await expect(cart.getByText('Your cart is empty.')).toBeVisible();
   });
 
+  test('proceeds to checkout', async ({ page, context }) => {
+    await skipWelcome(context);
+    await page.goto(url('/product/acme-mug?color=Blue'));
+    await waitForHydration(page);
+    await expect
+      .poll(async () => (await context.cookies()).map(({ name }) => name))
+      .toContain('cartId');
+    await page.getByRole('button', { name: 'Add to cart' }).click();
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Proceed to Checkout' })
+      .click();
+    await expect(page).toHaveURL(url('/checkout'));
+    await expect(page.getByRole('heading', { name: 'Checkout' })).toBeVisible();
+    await expect(page).toHaveTitle('Checkout | Acme Store');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'noindex, nofollow',
+    );
+  });
+
   test('renders content pages and answers unknown products with 404', async ({
     page,
   }) => {
