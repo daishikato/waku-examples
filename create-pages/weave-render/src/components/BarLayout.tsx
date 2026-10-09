@@ -4,10 +4,13 @@ import { Pending } from './pending';
 
 import '../styles.css';
 
+const getCurrentTime = () => new Date();
+
 const BarLayout = ({ children }: { children: ReactNode }) => {
+  const currentTime = getCurrentTime();
   return (
     <div>
-      <p>This Layout is expected to be static</p>
+      <p>This layout is dynamic. Rendered at: {currentTime.toISOString()}</p>
       <ul>
         <li>
           <Link to="/">

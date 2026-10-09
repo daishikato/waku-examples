@@ -34,14 +34,19 @@ test.describe('create-pages/weave-render', () => {
     await expect(renderTime).toHaveText(text!);
     await page.locator('a[href="/bar"]').click();
     await expect(
-      page.getByText('This Layout is expected to be static'),
-    ).toBeVisible();
-    await expect(
       page.getByRole('heading', { name: 'Bar', exact: true }),
     ).toBeVisible();
     await expect(renderTime).toHaveText(text!);
     await page.reload();
     await expect(renderTime).toHaveText(text!);
+  });
+
+  test('renders the dynamic bar layout on each request', async ({ page }) => {
+    await page.goto(url('/bar'));
+    const barTime = page.getByText(/^This layout is dynamic\. Rendered at: /);
+    const text = await barTime.textContent();
+    await page.reload();
+    await expect(barTime).not.toHaveText(text!);
   });
 
   test('runs the client component in a dynamic page', async ({ page }) => {
