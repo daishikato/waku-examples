@@ -1,9 +1,7 @@
 import { expect } from '@playwright/test';
 import { prepareExample, test, waitForHydration } from './utils.js';
 
-const startApp = prepareExample('fs-router/cloudflare', {
-  env: { CLOUDFLARE_CF_FETCH_ENABLED: 'false', WRANGLER_SEND_METRICS: 'false' },
-});
+const startApp = prepareExample('fs-router/cloudflare');
 
 test.describe('fs-router/cloudflare', () => {
   let port: number;
